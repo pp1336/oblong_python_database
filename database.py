@@ -30,7 +30,7 @@ class DBm:
 
     def __init__(self, dbname, host, port, user, passwd):
         self._database = pg.connect(dbname=dbname, host=host, port=port
-                                    user=user, passwd = passwd)
+                                    user=user, passwd=passwd)
         self.dbname = dbname
         self.host = host
         self.port = port
