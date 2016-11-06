@@ -7,6 +7,8 @@ class DBm:
     _from = "FROM"
     _where = "WHERE"
     _and = "AND"
+    _select = "SELECT"
+    _empty = ""
     _space = " "
     _semi_colon = ";"
     _comma = ","
@@ -17,6 +19,7 @@ class DBm:
     _format_5 = "%s%s%s%s%s"
     _format_6 = "%s%s%s%s%s%s"
     _format_7 = "%s%s%s%s%s%s%s"
+    _format_8 = "%s%s%s%s%s%s%s%s"
 
     def __init__(self, dbname, host, port, user, passwd):
         self._database = pg.connect(dbname=dbname, host=host, port=port
@@ -111,8 +114,8 @@ class DBm:
                                        DBm._semi_colon)
         return cmd
         
-    def search(self, conds):
-        cmd = "SELECT"
+    def _gen_cols_name(self, cols):
+        cmd = DBm._empty
         count = 0
         for col in self.cols_name:
             if (count < self.no_cols - 1):
@@ -125,7 +128,12 @@ class DBm:
                 cmd = DBm._format_3 % (cmd,
                                        DBm._space,
                                        col)
-        cmd = DBm._format_7 % (cmd,
+        return cmd
+        
+        
+    def search(self, conds):
+        cmd = DBm._format_8 % (DBm._select,
+                               self._gen_cols_name(self.cols_name),
                                DBm._space,
                                DBm._from,
                                DBm._space,
