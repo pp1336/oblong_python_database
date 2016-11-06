@@ -146,7 +146,9 @@ class DBm:
     def search(self, conds):
         """conds is a list of strings, denotes the conds for filter
         format: attribut=value, attribute>value etc.
-            e.g. ["name = \"john\"", "age > 36"]"""
+            e.g. ["name = \"john\"", "age > 36"]
+        returns a list of dictionaries, each one is a row in the
+        database"""
         cmd = DBm._format_9 % (DBm._select,
                                self._gen_list(self.cols_name),
                                DBm._space,
@@ -180,7 +182,7 @@ class DBm:
         
         self._update(cmd)
         
-     def _gen_pair_assign_list(self, cols_values):
+    def _gen_pair_assign_list(self, cols_values):
         l = len(cols_values)
         cmd = DBm._empty
         count = 0
