@@ -1,6 +1,6 @@
 import pg
 
-class Database_manager:
+class DBm:
 
     _create_table = "CREATE TABLE"
     _primary_key = "PRIMARY KEY"
@@ -39,51 +39,51 @@ class Database_manager:
         self._database.query(query)
 
     def create_table(self, name, cols, primary=[]):
-        cmd = Database_manager._format_4 % (Database_manager._create_table,
-                                            Database_manager._space,
-                                            name,
-                                            Database_manager._left_p)
+        cmd = DBm._format_4 % (DBm._create_table,
+                               DBm._space,
+                               name,
+                               DBm._left_p)
         l1 = len(cols)
         l2 = len(primary)
         count = 0
         for (col, t) in cols:
             if (l2 > 0 or count < l1 - 1):
-                cmd = Database_manager._format_6 % (cmd,
-                                                    Database_manager._space,
-                                                    col,
-                                                    Database_manager._space,
-                                                    t,
-                                                    Database_manager._comma)
+                cmd = DBm._format_6 % (cmd,
+                                       DBm._space,
+                                       col,
+                                       DBm._space,
+                                       t,
+                                       DBm._comma)
                 count += 1
             else:
-                cmd = Database_manager._format_5 % (cmd,
-                                                    Database_manager._space,
-                                                    col,
-                                                    Database_manager._space,
-                                                    t)
+                cmd = DBm._format_5 % (cmd,
+                                       DBm._space,
+                                       col,
+                                       DBm._space,
+                                       t)
         if (l2 > 0):
-            cmd = Database_manager._format_4 % (cmd,
-                                                Database_manager._space,
-                                                Database_manager._primary_key,
-                                                Database_manager._left_p)
+            cmd = DBm._format_4 % (cmd,
+                                   DBm._space,
+                                   DBm._primary_key,
+                                   DBm._left_p)
             count = 0
             for k in primary:
                 if (count < l2 - 1):
-                    cmd = Database_manager._format_4 % (cmd,
-                                                        Database_manager._space,
-                                                        k,
-                                                        Database_manager._comma)
+                    cmd = DBm._format_4 % (cmd,
+                                           DBm._space,
+                                           k,
+                                           DBm._comma)
                     count += 1
                 else:
-                    cmd = Database_manager._format_5 % (cmd,
-                                                        Database_manager._space,
-                                                        k,
-                                                        Database_manager._space,
-                                                        Database_manager._right_p)
-        cmd = Database_manager._format_4 % (cmd,
-                                            Database_manager._space,
-                                            Database_manager._right_p,
-                                            Database_manager._semi_colon)
+                    cmd = DBm._format_5 % (cmd,
+                                           DBm._space,
+                                           k,
+                                           DBm._space,
+                                           DBm._right_p)
+        cmd = DBm._format_4 % (cmd,
+                               DBm._space,
+                               DBm._right_p,
+                               DBm._semi_colon)
         cols_name, cols_type = zip(*cols)
         self.cols_name = cols_name
         self.cols_type = cols_type
@@ -94,44 +94,44 @@ class Database_manager:
         
     def _where_cond(self, conds):
         l = len(conds)
-        cmd = Database_manager._where
+        cmd = DBm._where
         count = 0
         for cond in conds:
             if (count < l - 1):
-                cmd = "%s%s%s%s%s" % (cmd,
-                                      Database_manager._space,
+                cmd = DBm._format_5 % (cmd,
+                                      DBm._space,
                                       cond,
-                                      Database_manager._space,
-                                      Database_manager._and)
+                                      DBm._space,
+                                      DBm._and)
                 count += 1
             else:
-                cmd = Database_manager._format_4 % (cmd,
-                                                    Database_manager._space,
-                                                    cond,
-                                                    Database_manager._semi_colon)
+                cmd = DBm._format_4 % (cmd,
+                                       DBm._space,
+                                       cond,
+                                       DBm._semi_colon)
         return cmd
         
-     def search(self, conds):
+    def search(self, conds):
         cmd = "SELECT"
         count = 0
         for col in self.cols_name:
             if (count < self.no_cols - 1):
-                cmd = Database_manager._format_4 % (cmd,
-                                                    Database_manager._space,
-                                                    col,
-                                                    Database_manager._comma)
+                cmd = DBm._format_4 % (cmd,
+                                       DBm._space,
+                                       col,
+                                       DBm._comma)
                 count += 1
             else:
-                cmd = Database_manager._format_3 % (cmd,
-                                                    Database_manager._space,
-                                                    col)
-        cmd = Database_manager._format_7 % (cmd,
-                                            Database_manager._space,
-                                            Database_manager._from,
-                                            Database_manager._space,
-                                            self.tname,
-                                            Database_manager._space,
-                                            self._where_cond(conds))
+                cmd = DBm._format_3 % (cmd,
+                                       DBm._space,
+                                       col)
+        cmd = DBm._format_7 % (cmd,
+                               DBm._space,
+                               DBm._from,
+                               DBm._space,
+                               self.tname,
+                               DBm._space,
+                               self._where_cond(conds))
         return self._query(cmd)
             
 
