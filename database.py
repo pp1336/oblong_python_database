@@ -49,6 +49,11 @@ class DBm:
         self._database.query(query)
 
     def create_table(self, name, cols, primary=[]):
+        """name is a string name of the table
+        cols is a list of pairs of strings (attribute, type)
+            e.g. [("name", "text"), ("age", "integer")]
+        primary is a list of strngs, denotes the primary key
+            e.g. ["name"]"""
         cmd = DBm._format_4 % (DBm._create_table,
                                DBm._space,
                                name,
@@ -139,6 +144,9 @@ class DBm:
         
         
     def search(self, conds):
+        """conds is a list of strings, denotes the conds for filter
+        format: attribut=value, attribute>value etc.
+            e.g. ["name = \"john\"", "age > 36"]"""
         cmd = DBm._format_9 % (DBm._select,
                                self._gen_list(self.cols_name),
                                DBm._space,
@@ -151,6 +159,9 @@ class DBm:
         return self._query(cmd)
         
     def insert(self, values):
+        """values is a list of string, must provide value for each column
+        in the table, values must be passed in the correct order
+            e.g. ["Marry", "32"]"""
         cmd = DBm._format_15 % (DBm._insert_into,
                                 DBm._space,
                                 self.tname,
@@ -195,6 +206,10 @@ class DBm:
         return cmd
         
     def update(self, cols_values, conds):
+        """cols_values is a list of pairs of strings
+        format: (attribute, value)
+           e.g. [("name", "\"john\""), ("age", "30")]
+        conds is the same as in search"""
         cmd = DBm._format_9 % (DBm._update,
                                DBm._space,
                                self.tname,
