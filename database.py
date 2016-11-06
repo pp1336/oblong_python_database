@@ -6,6 +6,7 @@ class Database_manager:
     _primary_key = "PRIMARY KEY"
     _from = "FROM"
     _where = "WHERE"
+    _and = "AND"
     _space = " "
     _semi_colon = ";"
     _comma = ","
@@ -37,7 +38,7 @@ class Database_manager:
     def _update(self, query):
         self._database.query(query)
 
-    def create_table(self, name, cols, primary):
+    def create_table(self, name, cols, primary=[]):
         cmd = Database_manager._format_4 % (Database_manager._create_table,
                                             Database_manager._space,
                                             name,
@@ -91,8 +92,26 @@ class Database_manager:
         self.primary = primary
         self._update(cmd)
         
-    def search(self, conds):
+    def _where_cond(self, conds):
         l = len(conds)
+        cmd = Database_manager._where
+        count = 0
+        for cond in conds:
+            if (count < l - 1):
+                cmd = "%s%s%s%s%s" % (cmd,
+                                      Database_manager._space,
+                                      cond,
+                                      Database_manager._space,
+                                      Database_manager._and)
+                count += 1
+            else:
+                cmd = Database_manager._format_4 % (cmd,
+                                                    Database_manager._space,
+                                                    cond,
+                                                    Database_manager._semi_colon)
+        return cmd
+        
+     def search(self, conds):
         cmd = "SELECT"
         count = 0
         for col in self.cols_name:
@@ -112,20 +131,7 @@ class Database_manager:
                                             Database_manager._space,
                                             self.tname,
                                             Database_manager._space,
-                                            Database_manager._where)
-        count = 0
-        for cond in conds:
-            if (count < l - 1):
-                cmd = Database_manager._format_4 % (cmd,
-                                                    Database_manager._space,
-                                                    cond,
-                                                    Database_manager._comma)
-                count += 1
-            else:
-                cmd = Database_manager._format_4 % (cmd,
-                                                    Database_manager._space,
-                                                    cond,
-                                                    Database_manager._semi_colon)
+                                            self._where_cond(conds))
         return self._query(cmd)
             
 
