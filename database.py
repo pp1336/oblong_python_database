@@ -8,8 +8,13 @@ class DBm:
     _where = "WHERE"
     _and = "AND"
     _select = "SELECT"
+    _insert_into = "INSERT INTO"
+    _values = "VALUES"
+    _update = "UPDATE"
+    _set = "SET"
     _empty = ""
     _space = " "
+    _equal = "="
     _semi_colon = ";"
     _comma = ","
     _left_p = "("
@@ -20,6 +25,7 @@ class DBm:
     _format_6 = "%s%s%s%s%s%s"
     _format_7 = "%s%s%s%s%s%s%s"
     _format_8 = "%s%s%s%s%s%s%s%s"
+    _format_9 = "%s%s%s%s%s%s%s%s%s"
     _format_15 = "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s"
 
     def __init__(self, dbname, host, port, user, passwd):
@@ -109,10 +115,9 @@ class DBm:
                                       DBm._and)
                 count += 1
             else:
-                cmd = DBm._format_4 % (cmd,
+                cmd = DBm._format_3 % (cmd,
                                        DBm._space,
-                                       cond,
-                                       DBm._semi_colon)
+                                       cond)
         return cmd
         
     def _gen_list(self, cols):
@@ -134,14 +139,15 @@ class DBm:
         
         
     def search(self, conds):
-        cmd = DBm._format_8 % (DBm._select,
+        cmd = DBm._format_9 % (DBm._select,
                                self._gen_list(self.cols_name),
                                DBm._space,
                                DBm._from,
                                DBm._space,
                                self.tname,
                                DBm._space,
-                               self._where_cond(conds))
+                               self._where_cond(conds),
+                               DBm._semi_colon)
         return self._query(cmd)
         
     def insert(self, values):
@@ -161,7 +167,44 @@ class DBm:
                                 DBm._right_p,
                                 DBm._semi_colon)
         
-        self._update(cmd)    
+        self._update(cmd)
+        
+     def _gen_pair_assign_list(self, cols_values):
+        l = len(cols_values)
+        cmd = DBm._empty
+        count = 0
+        for (col, value) in cols_values:
+            if (count < l - 1):
+                cmd = DBm._format_8 % (cmd,
+                                       DBm._space,
+                                       col,
+                                       DBm._space,
+                                       DBm._equal,
+                                       DBm._space,
+                                       value,
+                                       DBm._comma)
+                count += 1
+            else:
+                cmd = DBm._format_7 % (cmd,
+                                       DBm._space,
+                                       col,
+                                       DBm._space,
+                                       DBm._equal,
+                                       DBm._space,
+                                       value)
+        return cmd
+        
+    def update(self, cols_values, conds):
+        cmd = DBm._format_9 % (DBm._update,
+                               DBm._space,
+                               self.tname,
+                               DBm._space,
+                               DBm._set,
+                               self._gen_pair_assign_list(cols_values),
+                               DBm._space,
+                               self._where_cond(conds),
+                               DBm._semi_colon)
+        self._update(cmd)
 
 
     
