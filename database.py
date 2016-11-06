@@ -20,6 +20,7 @@ class DBm:
     _format_6 = "%s%s%s%s%s%s"
     _format_7 = "%s%s%s%s%s%s%s"
     _format_8 = "%s%s%s%s%s%s%s%s"
+    _format_15 = "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s"
 
     def __init__(self, dbname, host, port, user, passwd):
         self._database = pg.connect(dbname=dbname, host=host, port=port
@@ -114,11 +115,12 @@ class DBm:
                                        DBm._semi_colon)
         return cmd
         
-    def _gen_cols_name(self, cols):
+    def _gen_list(self, cols):
+        l = len(cols)
         cmd = DBm._empty
         count = 0
-        for col in self.cols_name:
-            if (count < self.no_cols - 1):
+        for col in cols:
+            if (count < l - 1):
                 cmd = DBm._format_4 % (cmd,
                                        DBm._space,
                                        col,
@@ -133,7 +135,7 @@ class DBm:
         
     def search(self, conds):
         cmd = DBm._format_8 % (DBm._select,
-                               self._gen_cols_name(self.cols_name),
+                               self._gen_list(self.cols_name),
                                DBm._space,
                                DBm._from,
                                DBm._space,
@@ -141,7 +143,25 @@ class DBm:
                                DBm._space,
                                self._where_cond(conds))
         return self._query(cmd)
-            
+        
+    def insert(self, values):
+        cmd = DBm._format_15 % (DBm._insert_into,
+                                DBm._space,
+                                self.tname,
+                                DBm._space,
+                                DBm._left_p,
+                                self._gen_list(self.cols_name),
+                                DBm._space,
+                                DBm._right_p,
+                                DBm._space,
+                                DBm._values,
+                                DBm._left_p,
+                                self._gen_list(values),
+                                DBm._space,
+                                DBm._right_p,
+                                DBm._semi_colon)
+        
+        self._update(cmd)    
 
 
     
